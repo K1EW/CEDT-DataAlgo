@@ -124,24 +124,15 @@ class priority_queue
     }
 
     void erase(const T& v) {
-      int i=-1;
-      std::queue<std::pair<int, T>> q;
-      q.emplace(0, mData[0]);
-      while (!q.empty()){
-        auto [idx, val] = q.front();
-        q.pop();
-        if (val == v){
-          i = idx;
-          break;
+      for (int i=0;i<mSize;i++){
+        if (mData[i] == v){
+          mData[i] = mData[mSize-1];
+          mSize--;
+          fixDown(i);
+          fixUp(i);
+          return;
         }
-        if (idx * 2 + 1 < mSize && mData[idx * 2 + 1] >= v) q.emplace(idx*2+1, mData[idx*2+1]);
-        if (idx * 2 + 2 < mSize && mData[idx * 2 + 2] >= v) q.emplace(idx*2+2, mData[idx*2+2]);
       }
-      if (i == -1) return;
-      mData[i] = mData[mSize-1];
-      mSize--;
-      fixDown(i);
-      fixUp(i);
     }
 
     void check_and_print() {
