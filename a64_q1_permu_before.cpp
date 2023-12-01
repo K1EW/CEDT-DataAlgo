@@ -9,29 +9,18 @@ int n, m;
 vector<vector<int>> ans;
 vector<int> con(25, -1);
 
-void perm(int &cnt, vector<int> &res, vector<int> &used){
-    if (cnt + res.size() < n) return;
+void perm(vector<int> &res, vector<bool> &used){
     if (res.size() == n){
         ans.push_back(res);
         return;
     }
     for (int i=0;i<n;i++){
-        if (used[i] == 0){
-            cnt--;
-            used[i] += 1;
-            if (con[i] != -1){
-                cnt -= used[con[i]] == 0;
-                used[con[i]] += 1;
-            } 
+        if (!used[i] && (con[i] == -1 || used[con[i]])){
             res.push_back(i);
-            perm(cnt, res, used);
+            used[i] = true;
+            perm(res, used);
+            used[i] = false;
             res.pop_back();
-            if (con[i] != -1){
-                cnt += used[con[i]] == 1;
-                used[con[i]] -= 1;
-            }
-            cnt++;
-            used[i] -= 1;
         }
     }
 }
@@ -47,9 +36,8 @@ int main(){
         con[b] = a;
     }
     vector<int> res;
-    vector<int> used(n);
-    int cnt=n;
-    perm(cnt,res,used);
+    vector<bool> used(n);
+    perm(res,used);
     sort(ALL(ans));
     for (auto v : ans){
         for (auto e : v) cout << e << " ";
